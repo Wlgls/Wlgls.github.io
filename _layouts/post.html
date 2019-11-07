@@ -1,0 +1,103 @@
+---
+layout: default
+---
+
+<div class="page clearfix" post>
+    <div class="left">
+        <h1>{{page.title}}</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>{{ page.date | date: "%F" }}
+            </div>
+
+            <div class="label-card">
+                {% if page.author %}<i class="fa fa-user"></i>{{ page.author }}
+                {% endif %}
+            </div>
+
+            <div class="label-card">
+                {% if page.meta %}<i class="fa fa-key"></i>{{ page.meta }}  {% endif %}
+            </div>
+
+            <div class="label-card">
+            {% include category.html %}
+            </div>
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        {{content}}
+        </article>
+        <hr>
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+            <div class="side-post">
+                <div>
+                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                    Toc
+                </div>
+                <ul id="content-side" class="content-ul">
+                    {% if hasSimilar.size > 0 %}
+                    <li><a href="#similar_posts">Similar Posts</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="side-post">
+                <div>
+                    <i class="fa fa-th-list"></i>
+                    Related
+                </div>
+                <ul class="content-ul">
+                    {% assign postsAfterFilter = '-' | split: "-" %}
+
+                    {% for p in site.posts %}
+                        {%if p.url != page.url %}
+                            {% assign commonTagCount = 0 %}
+
+                            {% for tag in p.tags %}
+                                {% if page.tags contains tag %}
+                                    {% assign commonTagCount = commonTagCount | plus: 1 %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% for cat in p.categories %}
+                                {% if page.categories contains cat %}
+                                    {% assign commonTagCount = commonTagCount | plus: 1 %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if commonTagCount > 0 %}
+                                {% assign postsAfterFilter = postsAfterFilter | push: p %}
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                    {% if postsAfterFilter.size > 0 %}
+                        {% for p in postsAfterFilter limit: 15 %}
+                            <li>
+                                <a href="{{ p.url | prepend: site.baseurl | prepend: site.url }}">{{ p.title }}</a>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <!-- <div class="side">bbbb</div> -->
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="{{ "/js/pageContent.js " | prepend: site.baseurl }}" charset="utf-8"></script>
